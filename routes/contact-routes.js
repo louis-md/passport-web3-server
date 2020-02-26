@@ -51,23 +51,8 @@ router.post("/", //uploader.single("avatar")
         .catch(next);
 })
 
-// router.post('/', (req, res, next)=>{
- 
-//   Contact.create({
-//     title: req.body.title,
-//     description: req.body.description,
-//     members: [],
-//     owner: req.user._id 
-//   })
-//     .then(response => {
-//       res.json(response);
-//     })
-//     .catch(err => {
-//       res.json(err);
-//     })
-// });
-
 router.get('/:id', (req, res, next)=>{
+    console.log(req.params.id)
     if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
       res.status(400).json({ message: 'Specified id is not valid' });
       return;
