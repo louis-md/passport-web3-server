@@ -2,6 +2,7 @@ const express = require('express');
 const router  = express.Router();
 const File = require('../models/File');
 const uploader = require('../configs/cloudinary');
+const User = require('../models/User')
 
 router.get('/', (req, res, next) => {
     File.find()
@@ -20,6 +21,7 @@ router.post('/new', (req, res, next) => {
     .then( aNewFile => {
         // console.log('Created new thing: ', aNewThing);
         res.status(200).json(aNewFile);
+        User.findByIdAndUpdate(aNewFile.owner, {$push: {"files": aNewFile._id}});
     })
     .catch( err => next(err) )
 })

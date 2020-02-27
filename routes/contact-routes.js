@@ -23,6 +23,7 @@ router.post("/", //uploader.single("avatar")
     else avatar = "https://cdn.onlinewebfonts.com/svg/img_258083.png";
     Contact
         .create({
+        avatar,
         firstName,
         lastName,
         secondaryEmails,
