@@ -19,25 +19,9 @@ const contactSchema = new Schema({
     bio: String,
     secondaryEmails: [String],
     phoneNumbers: [String],
-    ethAddresses: [{
-      type: String,
-      validated: Boolean}],
-    postalAddresses: [{
-      streetName: String,
-      streetNumber: Number,
-      special: String,
-      postCode: Number,
-      city: String,
-      country: String,
-      principalResidency: Boolean
-      }],
-    socialAccounts: {
-      googleId: String,
-      twitterId: String,
-      facebookId: String,
-      githubId: String,
-      asanaId: String
-      },
+    ethAddresses: [String],
+    postalAddresses: [Object],
+    socialAccounts: Object,
     avatar: {
       type: String,
       default: "https://cdn.onlinewebfonts.com/svg/img_258083.png"

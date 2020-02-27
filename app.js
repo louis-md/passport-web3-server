@@ -23,7 +23,7 @@ mongoose
   })
   .catch(err => {
     console.error('Error connecting to mongo', err)
-  });
+});
 
 const app_name = require('./package.json').name;
 const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.')[0]}`);
@@ -68,9 +68,9 @@ app.use(cors({
 
 
 // ROUTES MIDDLEWARE STARTS HERE:
-app.use('/api', require('./routes/organization-routes'));
+app.use('/api/organizations', require('./routes/organization-routes'));
 app.use('/api/contacts', require('./routes/contact-routes'))
-app.use('/api', require('./routes/task-routes'));
+app.use('/api/files', require('./routes/file-routes'));
 app.use('/api', require('./routes/auth-routes'));
 app.use('/', require('./routes/index'));
 
