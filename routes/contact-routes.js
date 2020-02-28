@@ -15,8 +15,7 @@ router.get('/', (req, res, next) => {
 });
 
 // POST route => to create a new contact
-router.post("/", //uploader.single("avatar")
-                                               (req, res, next) => {
+router.post("/",(req, res, next) => {
 
     const { firstName, lastName, secondaryEmails, phoneNumbers, ethAddresses, postalAddresses, socialAccounts } = req.body;
     if (req.file) avatar = req.file.url;

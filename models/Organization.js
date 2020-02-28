@@ -4,27 +4,24 @@ const Schema = mongoose.Schema;
 const organizationSchema = new Schema({
     title: String,
     description: String,
-    owner: [{
+    owner: {
       type: Schema.Types.ObjectId,
       ref: 'User'
-    }],
+    },
     members: [{
       type: Schema.Types.ObjectId,
       ref: 'User'
     }],
     contactEmail: [String],
+    ethAddresses: [String],
+    layers: [[{
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    }]],
     phoneNumbers: [String],
     website: [String],
     socialLinks: [String],
-    postalAddresses: [{
-      streetName: String,
-      streetNumber: Number,
-      special: String,
-      postCode: Number,
-      city: String,
-      country: String,
-      principalResidency: Boolean
-      }],
+    postalAddresses: [{Object}],
     logo: {
       type: String,
       default: "https://cdn.onlinewebfonts.com/svg/img_258083.png"
