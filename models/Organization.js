@@ -19,7 +19,7 @@ const organizationSchema = new Schema({
       ref: 'User'
     }]],
     phoneNumbers: [String],
-    website: [String],
+    website: String,
     socialLinks: [String],
     postalAddresses: [{Object}],
     logo: {
