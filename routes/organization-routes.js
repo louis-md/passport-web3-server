@@ -64,6 +64,7 @@ router.post("/", (req, res, next) => {
 });
 
 router.get("/:id", (req, res, next) => {
+  console.log(`route organization/:id taken, fetching organization ${req.params.id}`)
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     res.status(400).json({ message: "Specified id is not valid" });
     return;
@@ -74,12 +75,14 @@ router.get("/:id", (req, res, next) => {
       res.status(200).json(response);
     })
     .catch(err => {
+      console.log("Something went wrong getting organization/:id")
       res.json(err);
     });
 });
 
 // PUT route => to update a specific organization
 router.put("/:id", (req, res, next) => {
+  console.log(`PUT route organization/:id, saving ${JSON.stringify(req.body)} into organization ${req.params.id}`)
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     res.status(400).json({ message: "Specified id is not valid" });
     return;
@@ -90,6 +93,7 @@ router.put("/:id", (req, res, next) => {
       res.json({ message: `Organization is updated successfully.` });
     })
     .catch(err => {
+      console.log(err)
       res.json(err);
     });
 });

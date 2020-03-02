@@ -8,15 +8,92 @@ const organizationSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'User'
     },
+
+    contacts: [{
+      type: Schema.Types.ObjectId,
+      ref: "Contact"
+    }],
+  
+    contactsFromFriends: [{
+      type: Schema.Types.ObjectId,
+      ref: "File"
+    }],
+  
+    contactsFromOrganizations: [{
+      type: Schema.Types.ObjectId,
+      ref: "File"
+    }],
+    
+    files: [String],
+    filesFromFriends: [{
+      type: Schema.Types.ObjectId,
+      ref: "File"
+    }],
+  
+    filesFromOrganizations: [{
+      type: Schema.Types.ObjectId,
+      ref: "File"
+    }],
+  
     members: [{
       type: Schema.Types.ObjectId,
-      ref: 'User'
+      ref: "User"
     }],
+
+    membershipRequests: [{
+      fromId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      message: String
+    }],
+
+    partnershipRequests: [{
+      fromId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Organization'
+      },
+      message: String
+    }],
+  
+    partnerOrganizations: [{
+      id: {
+        type: Schema.Types.ObjectId,
+        ref: "Organization"
+      },
+      hasAccessToContacts: [{
+        type: Schema.Types.ObjectId,
+        ref: "Contacts"
+      }],
+      hasAccessToFiles: [{
+        type: Schema.Types.ObjectId,
+        ref: "File"
+      }]
+    }],
+
+    partnershipRequests: [{
+      fromId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Organization'
+      },
+      message: String
+    }],
+
     contactEmail: [String],
     ethAddresses: [String],
     layers: [[{
-      type: Schema.Types.ObjectId,
-      ref: 'User'
+      id: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
+      },
+      hasAccessToContacts: [{
+        type: Schema.Types.ObjectId,
+        ref: "User"
+      }],
+      hasAccessToFiles: [{
+        type: Schema.Types.ObjectId,
+        ref: "File"
+      }]
     }]],
     phoneNumbers: [String],
     website: String,

@@ -71,6 +71,7 @@ app.use(cors({
 app.use('/api/organizations', require('./routes/organization-routes'));
 app.use('/api/contacts', require('./routes/contact-routes'));
 app.use('/api/files', require('./routes/file-routes'));
+app.use('/api/users', require('./routes/user-routes'));
 app.use('/api/graph', require('./routes/graph-routes'));
 app.use('/api', require('./routes/auth-routes'));
 app.use('/', require('./routes/index'));

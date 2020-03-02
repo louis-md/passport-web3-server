@@ -4,43 +4,86 @@ const Schema   = mongoose.Schema;
 const userSchema = new Schema({
   email: {type: String, required: false, unique: true},
   password: {type: String, required: false},
+
   profile: {
     type: Schema.Types.ObjectId,
     ref: "Contact",
   },
+  
   contacts: [{
     type: Schema.Types.ObjectId,
     ref: "Contact"
   }],
+
+  contactsFromFriends: [{
+    type: Schema.Types.ObjectId,
+    ref: "File"
+  }],
+
+  contactsFromOrganizations: [{
+    type: Schema.Types.ObjectId,
+    ref: "File"
+  }],
+  
   files: [String],
+  filesFromFriends: [{
+    type: Schema.Types.ObjectId,
+    ref: "File"
+  }],
+
+  filesFromOrganizations: [{
+    type: Schema.Types.ObjectId,
+    ref: "File"
+  }],
+
+  // friends: [{
+  //   id: {
+  //     type: Schema.Types.ObjectId,
+  //     ref: "User"
+  //   },
+  //   hasAccessToContacts: [{
+  //     type: Schema.Types.ObjectId,
+  //     ref: "User"
+  //   }],
+  //   hasAccessToFiles: [{
+  //     type: Schema.Types.ObjectId,
+  //     ref: "File"
+  //   }]
+  // }],
+
+  // friendRequests: [{
+  //   fromId: {
+  //     type: Schema.Types.ObjectId,
+  //     ref: 'User'
+  //   },
+  //   message: String
+  // }],
+
+  invitations: [{
+    fromId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Organization'
+    },
+    message: String
+  }],
+
   organizations: [{
-    type: Schema.Types.ObjectId,
-    ref: "Organization"
+    organizationId: {
+      type: Schema.Types.ObjectId,
+      ref: "Organization"
+    },
+    hasAccessToMyContacts: Boolean,
+    hasAccessToMyFiles: Boolean
+    // hasAccessToContacts: [{
+    //   type: Schema.Types.ObjectId,
+    //   ref: "Contacts"
+    // }],
+    // hasAccessToFiles: [{
+    //   type: Schema.Types.ObjectId,
+    //   ref: "File"
+    // }]
   }],
-  sharingProfileWithMembers: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  sharingContactsWithMembers: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  sharingFilesWithMembers: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  sharingProfileWithOrganizations: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  sharingContactsWithOrganizations: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  sharingFilesWithOrganizations: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
+
   confirmedEmail: Boolean,
   confirmationCode: {
     type: String,
