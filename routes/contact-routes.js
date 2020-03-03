@@ -30,7 +30,7 @@ router.post("/",(req, res, next) => {
         ethAddresses,
         postalAddresses,
         socialAccounts,
-        user: req.session.currentUser._id
+        user: req.session.passport.user
         })
         .then((response) => {
         res.status(200).json(response)        // req.flash("success", "contact successfully created");

@@ -82,6 +82,7 @@ router.get("/:id", (req, res, next) => {
 
 // PUT route => to update a specific organization
 router.put("/:id", (req, res, next) => {
+  console.log(req.body)
   console.log(`PUT route organization/:id, saving ${JSON.stringify(req.body)} into organization ${req.params.id}`)
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     res.status(400).json({ message: "Specified id is not valid" });
