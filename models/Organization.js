@@ -14,23 +14,23 @@ const organizationSchema = new Schema({
       ref: "Contact"
     }],
   
-    contactsFromFriends: [{
+    contactsFromMembers: [{
       type: Schema.Types.ObjectId,
-      ref: "File"
+      ref: "Contact"
     }],
   
-    contactsFromOrganizations: [{
+    contactsFromPartners: [{
       type: Schema.Types.ObjectId,
-      ref: "File"
+      ref: "Contact"
     }],
     
     files: [String],
-    filesFromFriends: [{
+    filesFromMembers: [{
       type: Schema.Types.ObjectId,
       ref: "File"
     }],
   
-    filesFromOrganizations: [{
+    filesFromPartners: [{
       type: Schema.Types.ObjectId,
       ref: "File"
     }],
