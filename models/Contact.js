@@ -20,6 +20,7 @@ const contactSchema = new Schema({
     secondaryEmails: [String],
     phoneNumbers: [String],
     ethAddresses: [String],
+    validatedEthAddresses: [String],
     postalAddresses: [Object],
     socialAccounts: Object,
     avatar: {

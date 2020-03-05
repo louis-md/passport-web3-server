@@ -32,7 +32,8 @@ router.post("/", (req, res, next) => {
     publicFiles,
     privateFiles,
     publicContacts,
-    privateContacts
+    privateContacts,
+    contacts
   } = req.body;
 
   Organization.create({
@@ -51,7 +52,8 @@ router.post("/", (req, res, next) => {
     publicFiles,
     privateFiles,
     publicContacts,
-    privateContacts
+    privateContacts,
+    contacts
   })
     .then(response => {
       console.log("Successfully saved organization to the database");
