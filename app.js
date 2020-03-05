@@ -15,6 +15,9 @@ const passport     = require('passport');
 const MongoStore   = require('connect-mongo')(session);
 const flash        = require("connect-flash");
 const axios        = require('axios').default;
+const Web3 = require('web3')
+
+web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 
 mongoose
   .connect('mongodb://localhost/passport-web3', {useNewUrlParser: true})

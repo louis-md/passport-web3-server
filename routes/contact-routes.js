@@ -47,6 +47,7 @@ router.get('/:id', (req, res, next)=>{
     }
     Contact.findById(req.params.id)
       .then(response => {
+        console.log(response)
         res.status(200).json(response);
       })
       .catch(err => {
