@@ -20,7 +20,7 @@ const Web3 = require('web3')
 web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 
 mongoose
-  .connect('mongodb://localhost/passport-web3', {useNewUrlParser: true})
+  .connect(process.env.MONGODB_URI, {useNewUrlParser: true})
   .then(x => {
     console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`)
   })
