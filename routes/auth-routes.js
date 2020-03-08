@@ -117,7 +117,6 @@ authRoutes.post('/login', (req, res, next) => {
     const user = req.body;
   
     if (!user.email || !user.password) {
-      conso
       req.flash("error", "Wrong credentials");
       return;
     }
