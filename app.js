@@ -1,5 +1,6 @@
 require('dotenv').config();
-require('./configs/passport');
+// require("./passport/serializers")
+require('./passport/localStrategy');
 
 const bodyParser   = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -52,13 +53,13 @@ app.use(session({
   store: new MongoStore( { mongooseConnection: mongoose.connection })
 }));
 app.use(flash());
-require('./passport')(app);
+// require('./passport')(app);
 
 
 // USE passport.initialize() and passport.session() HERE:
 app.use(passport.initialize());
 app.use(passport.session());
-
+// require("./passport/localStrategy")
 // default value for title local
 app.locals.title = 'Passport Web3';
 

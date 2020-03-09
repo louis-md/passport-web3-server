@@ -126,6 +126,7 @@ authRoutes.post("/login", (req, res, next) => {
       return res.status(200).send(user);
     });
   })(req, res, next);
+});
   // const user = req.body;
 
   // if (!user.email || !user.password) {
@@ -170,56 +171,12 @@ authRoutes.post("/login", (req, res, next) => {
   //   })
   //   .catch(next);
   // res.status(200).json({ message: 'Log out success!' });
-});
+// });
 
-authRoutes.post("/login", (req, res, next) => {
-  const user = req.body;
-
-  if (!user.email || !user.password) {
-    req.flash("error", "Wrong credentials");
-    return;
-  }
-
-  User.findOne({ email: user.email })
-    .then(dbRes => {
-      activeUser = dbRes._id;
-      console.log(activeUser);
-      console.log(user.password, user.email);
-
-      if (!dbRes) {
-        return res.status(403).json({ message: "Unauthorized" });
-      }
-      if (bcrypt.compareSync(user.password, dbRes.password)) {
-        const { _doc: clone } = { ...dbRes };
-
-        delete clone.password;
-        req.session.currentUser = clone;
-        if (dbRes.confirmedEmail) {
-          console.log("Logged in!");
-          req.logIn(dbRes, err => {
-            if (err) {
-              res.status(500).json({ message: "Login after signup went bad." });
-              return;
-            }
-            res.status(200).json(user);
-            return;
-          });
-        } else {
-          console.log("Email unconfirmed");
-          return res.status(403).json({ message: "Email unconfirmed" });
-        }
-      } else {
-        console.log("Wrong credentials");
-        req.flash("error", "Wrong credentials");
-        return res.status(403).json({ message: "Wrong credentials" });
-      }
-    })
-    .catch(next);
-});
 
 authRoutes.get("/loggedin", (req, res, next) => {
   // req.isAuthenticated() is defined by passport
-  console.log(req);
+  // console.log(req);
   if (req.isAuthenticated()) {
     res.status(200).json(req.user);
     return;
