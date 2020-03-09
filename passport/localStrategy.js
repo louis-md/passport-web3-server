@@ -65,6 +65,7 @@ passport.use(
       userModel
         .findOne({ email: email })
         .then(user => {
+          console.log("This is user ----")
           // console.log("@ LocalStrategy :::: found user in db :", user);
           // db query success
           if (!user) return next(null, false, "Incorrect signin infos");
