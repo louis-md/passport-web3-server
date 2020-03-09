@@ -1,17 +1,18 @@
-const express    = require('express');
+const express = require("express");
 const authRoutes = express.Router();
 
-const passport   = require('passport');
-const bcrypt     = require('bcryptjs');
-const User       = require('../models/User');
-const Contact    = require("../models/Contact")
-
+const passport = require("passport");
+const bcrypt = require("bcryptjs");
+const User = require("../models/User");
+const Contact = require("../models/Contact");
 
 const nodemailer = require("nodemailer");
-var Recaptcha = require('express-recaptcha').RecaptchaV2;
-var recaptcha = new Recaptcha(process.env.RECAPTCHA_SITEKEY, process.env.RECAPTCHA_SITESECRET);
-var zxcvbn = require('zxcvbn');
-
+var Recaptcha = require("express-recaptcha").RecaptchaV2;
+var recaptcha = new Recaptcha(
+  process.env.RECAPTCHA_SITEKEY,
+  process.env.RECAPTCHA_SITESECRET
+);
+var zxcvbn = require("zxcvbn");
 
 authRoutes.post("/signup", recaptcha.middleware.verify, (req, res, next) => {
   const firstName = req.body.firstName;
@@ -21,26 +22,27 @@ authRoutes.post("/signup", recaptcha.middleware.verify, (req, res, next) => {
   const bcryptSalt = 10;
   const salt = bcrypt.genSaltSync(bcryptSalt);
   const hashPass = bcrypt.hashSync(password, salt);
-  const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let token = '';
-  
+  const characters =
+    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let token = "";
+
   zxcvbn(password, req.body);
 
   for (let i = 0; i < 25; i++) {
-      token += characters[Math.floor(Math.random() * characters.length )];
+    token += characters[Math.floor(Math.random() * characters.length)];
   }
 
   if (email === "" || password === "") {
-    console.log('Provide username and password');
+    console.log("Provide username and password");
     return;
   }
 
-  User.findOne({email}, "email", (err, user) => {
+  User.findOne({ email }, "email", (err, user) => {
     if (user !== null) {
-      console.log('Email taken. Choose another one.');
+      console.log("Email taken. Choose another one.");
       return;
     }
-  })
+  });
 
   async function sendConfirmationEmail() {
     let transporter = nodemailer.createTransport({
@@ -53,7 +55,7 @@ authRoutes.post("/signup", recaptcha.middleware.verify, (req, res, next) => {
         pass: process.env.NODEMAILER_PASSWORD
       }
     });
-    
+
     let info = await transporter.sendMail({
       from: '"Contacth 👻" <contacth@97.network>',
       to: email,
@@ -68,7 +70,7 @@ authRoutes.post("/signup", recaptcha.middleware.verify, (req, res, next) => {
     email: email,
     password: hashPass,
     confirmationCode: token,
-    confirmedEmail: false,
+    confirmedEmail: false
   });
 
   const newContact = new Contact({
@@ -76,98 +78,152 @@ authRoutes.post("/signup", recaptcha.middleware.verify, (req, res, next) => {
     lastName: lastName
   });
 
-//   if (!req.recaptcha.error) {
-    Promise.all([newUser.save(), newContact.save()])
+  //   if (!req.recaptcha.error) {
+  Promise.all([newUser.save(), newContact.save()]).then(dbRes => {
+    User.findByIdAndUpdate(dbRes[0]._id, { profile: dbRes[1]._id }).then(() => {
+      Contact.findByIdAndUpdate(dbRes[1]._id, { owner: dbRes[0]._id }).then(
+        () => {
+          sendConfirmationEmail();
+          req.login(newUser, err => {
+            if (err) {
+              res.status(500).json({ message: "Login after signup went bad." });
+              return;
+            }
+
+            // Send the user's information to the frontend
+            // We can use also: res.status(200).json(req.user);
+            res.status(200).json(newUser);
+            console.log("Logged in after signup");
+          });
+        }
+      );
+    });
+  });
+  //   } else {
+  //     console.log('Recaptcha error');
+  //   }
+});
+
+authRoutes.post("/logout", (req, res, next) => {
+  // req.logout() is defined by passport
+  req.logout();
+  res.status(200).json({ message: "Log out success!" });
+});
+
+authRoutes.post("/login", (req, res, next) => {
+  passport.authenticate("local", function(err, user, info) {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.redirect("/login");
+    }
+    req.logIn(user, function(err) {
+      if (err) {
+        return next(err);
+      }
+      return res.status(200).send(user);
+    });
+  })(req, res, next);
+  // const user = req.body;
+
+  // if (!user.email || !user.password) {
+  //   req.flash("error", "Wrong credentials");
+  //   return;
+  // }
+
+  // User
+  //   .findOne({email: user.email})
+  //   .then(dbRes => {
+  //     activeUser = dbRes._id
+  //     console.log(activeUser);
+  //     console.log(user.password, user.email)
+
+  //     if (!dbRes) {
+  //       return res.status(403).json({ message: 'Unauthorized' });
+  //     }
+  //     if (bcrypt.compareSync(user.password, dbRes.password)) {
+  //       const { _doc: clone } = { ...dbRes };
+
+  //       delete clone.password;
+  //       req.session.currentUser = clone;
+  //       if(dbRes.confirmedEmail) {
+  //         console.log("Logged in!")
+  //         req.logIn(dbRes, (err) => {
+  //             if (err) {
+  //                 res.status(500).json({ message: 'Login after signup went bad.' });
+  //                 return;
+  //             }
+  //             res.status(200).json(user);
+  //         return;
+  //         })
+  //       } else {
+  //         console.log('Email unconfirmed')
+  //         return res.status(403).json({ message: 'Email unconfirmed' });
+  //       }
+  //     } else {
+  //       console.log("Wrong credentials")
+  //       req.flash("error", "Wrong credentials");
+  //       return res.status(403).json({ message: 'Wrong credentials' });;
+  //     }
+  //   })
+  //   .catch(next);
+  // res.status(200).json({ message: 'Log out success!' });
+});
+
+authRoutes.post("/login", (req, res, next) => {
+  const user = req.body;
+
+  if (!user.email || !user.password) {
+    req.flash("error", "Wrong credentials");
+    return;
+  }
+
+  User.findOne({ email: user.email })
     .then(dbRes => {
-      User
-        .findByIdAndUpdate(dbRes[0]._id, {profile: dbRes[1]._id})
-        .then(() => {
-          Contact
-            .findByIdAndUpdate(dbRes[1]._id, {owner: dbRes[0]._id})
-            .then(() => {
-                sendConfirmationEmail();
-                req.login(newUser, (err) => {
+      activeUser = dbRes._id;
+      console.log(activeUser);
+      console.log(user.password, user.email);
 
-                    if (err) {
-                        res.status(500).json({ message: 'Login after signup went bad.' });
-                        return;
-                    }
-                
-                    // Send the user's information to the frontend
-                    // We can use also: res.status(200).json(req.user);
-                    res.status(200).json(newUser);
-                    console.log("Logged in after signup")
-                })
-            })
-        })
-    })
-//   } else {
-//     console.log('Recaptcha error');
-//   }
-})
+      if (!dbRes) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      if (bcrypt.compareSync(user.password, dbRes.password)) {
+        const { _doc: clone } = { ...dbRes };
 
-authRoutes.post('/logout', (req, res, next) => {
-    // req.logout() is defined by passport
-    req.logout();
-    res.status(200).json({ message: 'Log out success!' });
-});
-
-
-authRoutes.post('/login', (req, res, next) => {
-    const user = req.body;
-  
-    if (!user.email || !user.password) {
-      req.flash("error", "Wrong credentials");
-      return;
-    }
-  
-    User
-      .findOne({email: user.email})
-      .then(dbRes => {
-        activeUser = dbRes._id
-        console.log(activeUser);
-        console.log(user.password, user.email)
-
-        if (!dbRes) {
-          return res.status(403).json({ message: 'Unauthorized' });
-        }
-        if (bcrypt.compareSync(user.password, dbRes.password)) {
-          const { _doc: clone } = { ...dbRes };
-  
-          delete clone.password;
-          req.session.currentUser = clone;
-          if(dbRes.confirmedEmail) {
-            console.log("Logged in!")
-            req.login(dbRes, (err) => {
-
-                if (err) {
-                    res.status(500).json({ message: 'Login after signup went bad.' });
-                    return;
-                }
-                res.status(200).json(user);
+        delete clone.password;
+        req.session.currentUser = clone;
+        if (dbRes.confirmedEmail) {
+          console.log("Logged in!");
+          req.logIn(dbRes, err => {
+            if (err) {
+              res.status(500).json({ message: "Login after signup went bad." });
+              return;
+            }
+            res.status(200).json(user);
             return;
-            })
-          } else {
-            console.log('Email unconfirmed')
-            return res.status(403).json({ message: 'Email unconfirmed' });
-          }
+          });
         } else {
-          console.log("Wrong credentials")
-          req.flash("error", "Wrong credentials");
-          return res.status(403).json({ message: 'Wrong credentials' });;
+          console.log("Email unconfirmed");
+          return res.status(403).json({ message: "Email unconfirmed" });
         }
-      })
-      .catch(next);
+      } else {
+        console.log("Wrong credentials");
+        req.flash("error", "Wrong credentials");
+        return res.status(403).json({ message: "Wrong credentials" });
+      }
+    })
+    .catch(next);
 });
 
-authRoutes.get('/loggedin', (req, res, next) => {
-    // req.isAuthenticated() is defined by passport
-    console.log(req)
-    if (req.isAuthenticated()) {
-        res.status(200).json(req.user);
-        return;
-    }
-    res.status(403).json({ message: 'Unauthorized' });
+authRoutes.get("/loggedin", (req, res, next) => {
+  // req.isAuthenticated() is defined by passport
+  console.log(req);
+  if (req.isAuthenticated()) {
+    res.status(200).json(req.user);
+    return;
+  }
+  res.status(403).json({ message: "Unauthorized" });
 });
 
 module.exports = authRoutes;
