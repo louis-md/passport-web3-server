@@ -116,7 +116,8 @@ authRoutes.post("/login", (req, res, next) => {
       return next(err);
     }
     if (!user) {
-      return res.redirect("/login");
+      console.log(user)
+      return res.status(400).send("Invalid credentials")
     }
     req.logIn(user, function(err) {
       if (err) {
