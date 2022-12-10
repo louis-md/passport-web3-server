@@ -19,7 +19,7 @@
     "cors": "^2.8.5",
     "dotenv": "^6.0.0",
     "ethereumjs-testrpc": "^6.0.3",
-    "express": "^4.16.3",
+    "express": "^4.17.3",
     "express-recaptcha": "^5.0.1",
     "express-session": "^1.17.0",
     "hbs": "^4.0.3",
